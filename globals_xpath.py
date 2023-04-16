@@ -3,11 +3,18 @@ _COPY_PROCESS = {
     "copy_password": "//*[@id=\"pwd-copy-btn\"]",
 }
 
-_CHECKBOX_LIST = {
+_CHECKBOX_LIST_LABEL = {
     "ABC": "//*[@for=\"uppercase\"]",
     "abc": "//*[@for=\"lowercase\"]",
     "number": "//*[@for=\"numbers\"]",
     "specials": "//*[@for=\"specials\"]",
+}
+
+_CHECKBOX_LIST_ID = {
+    "ABC": "//*[@id=\"uppercase\"]",
+    "abc": "//*[@id=\"lowercase\"]",
+    "number": "//*[@id=\"numbers\"]",
+    "specials": "//*[@id=\"specials\"]",
 }
 
 _SELECT_DICT = {

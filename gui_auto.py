@@ -7,6 +7,7 @@ from PySimpleGUI import (
     Window,
     InputText,
     Checkbox,
+    Slider,
     WIN_CLOSED
 )
 
@@ -28,6 +29,15 @@ def layout_main():
             Checkbox(text="lo que sea", default=False, key="-abc-"),
             Checkbox(text="lo que sea", default=False, key="-number-"),
             Checkbox(text="lo que sea", default=False, key="-specials-")
+        ],
+        [
+            Slider(
+                range=(1, 50),
+                default_value=15,
+                enable_events=True,
+                orientation="horizontal",
+                expand_x=True
+            )
         ],
         [
             Button('start', key="-start-"),
@@ -68,6 +78,15 @@ def rendering_logic():
 
         if event == "-update_data-":
             result = receptor.recv()
+            print(result, "=> esto es qui el print XD")
+            result_selected_id = result['_CHECKBOX_LIST_ID']
+            for item_result_selected in result_selected_id:
+                extract_password = result_selected_id[item_result_selected]
+                if extract_password == "true":
+                    window[f"-{item_result_selected}-"].update(value=True)
+                else:
+                    window[f"-{item_result_selected}-"].update(value=False)
+
             result_checkbox_child = result['_CHECKBOX_LIST']
             for item_result_checkbox in result_checkbox_child:
                 text_value = result_checkbox_child[item_result_checkbox]
