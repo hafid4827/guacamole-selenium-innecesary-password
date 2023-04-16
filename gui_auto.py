@@ -36,11 +36,11 @@ def layout_main():
                 default_value=15,
                 enable_events=True,
                 orientation="horizontal",
-                expand_x=True
+                expand_x=True,
+                key="-range-password-",
             )
         ],
         [
-            Button('start', key="-start-"),
             Button('update data', key="-update_data-"),
             Button('new data', key="-new_data-"),
             Button('reload permanent', key="-reload_permanent-"),
@@ -70,15 +70,14 @@ def rendering_logic():
     while True:
         event, values = window.read()
 
-        if event == "-start-":
-            target = Process(target=exe, args=(transmisor,))
-            target.start()
-            # window['-start-'].update(disabled=True)
-            # window['-update-'].update(disabled=True)
-
         if event == "-update_data-":
+            value_slider = int(values['-range-password-'])
+            print(value_slider)
+
+            target = Process(target=exe, args=(transmisor, value_slider,))
+            target.start()
+
             result = receptor.recv()
-            print(result, "=> esto es qui el print XD")
             result_selected_id = result['_CHECKBOX_LIST_ID']
             for item_result_selected in result_selected_id:
                 extract_password = result_selected_id[item_result_selected]

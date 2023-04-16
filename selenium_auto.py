@@ -2,7 +2,8 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 from os.path import abspath
 from time import sleep
 
@@ -10,9 +11,12 @@ from globals_xpath import _SELECT_DICT, _CHECKBOX_LIST_LABEL, _CHECKBOX_LIST_ID
 
 
 def init_selenium(url: str, optional_screen: bool = True):
-    services = Service(executable_path=abspath("./geckodriver"))
-    driver = webdriver.Firefox(service=services)
+    firefox_option = Options()
+    firefox_option.add_argument('--headless')
 
+    services = Service(executable_path=abspath("./geckodriver"),)
+    # esto abre el navegador
+    driver = webdriver.Firefox(service=services, options=firefox_option)
     if optional_screen:
         driver.fullscreen_window()  # esto hace grande la pantalla
 
@@ -43,12 +47,31 @@ def select_dict_interactive(driver: object, items_select: dict, funt: any) -> No
     return temporal_var
 
 
-def exe(trasmisor):
+def send_key_range(driver: object, element: str, range_default: int = 15, move: int = 10):
+    slider = driver.find_element(by=By.XPATH, value=element)
+    count = range_default
+
+    while count < move:
+        slider.send_keys(Keys.RIGHT)
+        count += 1
+
+    while count > move:
+        slider.send_keys(Keys.LEFT)
+        count -= 1
+
+
+def exe(trasmisor, move_send: int) -> None:
     # logic automatization
     url_page = "https://www.avast.com/es-mx/random-password-generator#pc"
     driver = init_selenium(url=url_page)
     sleep(5)
-    # item_selected_iteractive()
+
+    slider_is = _SELECT_DICT['slider_len_password']
+    send_key_range(
+        driver=driver,
+        element=slider_is,
+        move=move_send
+    )
 
     super_dict = {}
     select_dict = select_dict_interactive(
@@ -73,6 +96,4 @@ def exe(trasmisor):
 
     # se envia a travez del tunel a la interfaz
     trasmisor.send(super_dict)
-    # sleep(5)
-    # closed
-    # driver.close()
+    driver.close()
