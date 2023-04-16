@@ -42,8 +42,7 @@ def layout_main():
         ],
         [
             Button('update data', key="-update_data-"),
-            Button('new data', key="-new_data-"),
-            Button('reload permanent', key="-reload_permanent-"),
+            Button('cancel', key="-cancel-"),
         ]
     ]
     return layout
@@ -72,9 +71,19 @@ def rendering_logic():
 
         if event == "-update_data-":
             value_slider = int(values['-range-password-'])
-            print(value_slider)
 
-            target = Process(target=exe, args=(transmisor, value_slider,))
+            value_checkbox_list = {
+                'ABC': values['-ABC-'],
+                'abc': values['-abc-'],
+                'number': values['-number-'],
+                'specials': values['-specials-'],
+            }
+
+            target = Process(target=exe, args=(
+                transmisor,
+                value_slider,
+                value_checkbox_list,
+            ))
             target.start()
 
             result = receptor.recv()

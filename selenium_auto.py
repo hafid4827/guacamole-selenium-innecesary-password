@@ -24,6 +24,31 @@ def init_selenium(url: str, optional_screen: bool = True):
     return driver
 
 
+def click_chekcbox_options(driver: object, items_select: dict, items_select_default_value: dict) -> None:
+    checkbox_list_id = select_dict_interactive(
+        driver=driver,
+        items_select=_CHECKBOX_LIST_ID,
+        funt=item_selected_checkbox_value_iteractive
+    )
+    for iter_value_default in items_select_default_value:
+        False_or_True = items_select_default_value[iter_value_default]
+        result_seletec_item_xpath = items_select[iter_value_default]
+        result_seletec_item_state = checkbox_list_id[iter_value_default]
+
+        if result_seletec_item_state == "true":
+            extract_text = driver.find_element(
+                by=By.XPATH,
+                value=result_seletec_item_xpath
+            )
+            extract_text.click()
+        if False_or_True:
+            extract_text = driver.find_element(
+                by=By.XPATH,
+                value=result_seletec_item_xpath
+            )
+            extract_text.click()
+
+
 def item_selected_iteractive(driver: object, items_select: dict, selected: str) -> None:
     element_dict = items_select[selected]
     extract_text = driver.find_element(by=By.XPATH, value=element_dict)
@@ -51,20 +76,24 @@ def send_key_range(driver: object, element: str, range_default: int = 15, move: 
     slider = driver.find_element(by=By.XPATH, value=element)
     count = range_default
 
-    while count < move:
-        slider.send_keys(Keys.RIGHT)
-        count += 1
+    if count < move:
+        slider.send_keys(Keys.RIGHT * abs(move - count))
 
-    while count > move:
-        slider.send_keys(Keys.LEFT)
-        count -= 1
+    if count > move:
+        slider.send_keys(Keys.LEFT * abs(move - count))
 
 
-def exe(trasmisor, move_send: int) -> None:
+def exe(trasmisor, move_send: int, checkbox_value: dict) -> None:
     # logic automatization
     url_page = "https://www.avast.com/es-mx/random-password-generator#pc"
     driver = init_selenium(url=url_page)
     sleep(5)
+
+    click_chekcbox_options(
+        driver=driver,
+        items_select=_CHECKBOX_LIST_LABEL,
+        items_select_default_value=checkbox_value,
+    )
 
     slider_is = _SELECT_DICT['slider_len_password']
     send_key_range(
@@ -74,11 +103,7 @@ def exe(trasmisor, move_send: int) -> None:
     )
 
     super_dict = {}
-    select_dict = select_dict_interactive(
-        driver=driver,
-        items_select=_SELECT_DICT,
-        funt=item_selected_iteractive
-    )
+
     checkbox_list = select_dict_interactive(
         driver=driver,
         items_select=_CHECKBOX_LIST_LABEL,
@@ -88,6 +113,11 @@ def exe(trasmisor, move_send: int) -> None:
         driver=driver,
         items_select=_CHECKBOX_LIST_ID,
         funt=item_selected_checkbox_value_iteractive
+    )
+    select_dict = select_dict_interactive(
+        driver=driver,
+        items_select=_SELECT_DICT,
+        funt=item_selected_iteractive
     )
 
     super_dict["_SELECT_DICT"] = select_dict
